@@ -1,21 +1,31 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
 	"github.com/Hammond95/bartender/bartender/version"
 	"github.com/gin-gonic/gin"
+	hclog "github.com/hashicorp/go-hclog"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func HelloHandler(c *gin.Context) {
+type HandlersEnv struct {
+	mongodb *mongo.Client
+	logger  hclog.Logger
+}
+
+func (env *HandlersEnv) HelloHandler(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{"message": "Hello World!"},
 	)
 }
 
-func InfoHandler(c *gin.Context) {
+func (env *HandlersEnv) InfoHandler(c *gin.Context) {
 	info := struct {
 		App       string `json:"app"`
 		BuildTime string `json:"buildTime"`
@@ -39,14 +49,14 @@ func InfoHandler(c *gin.Context) {
 	)
 }
 
-func LivenessHandler(c *gin.Context) {
+func (env *HandlersEnv) LivenessHandler(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
 		gin.H{"status": "UP"},
 	)
 }
 
-func ReadinessHandler(c *gin.Context) {
+func (env *HandlersEnv) ReadinessHandler(c *gin.Context) {
 	// If we add calls to external resources (e.g. a database),
 	// we should also perform readiness
 	// checks to those resources.
@@ -62,6 +72,13 @@ func ReadinessHandler(c *gin.Context) {
 		)
 	}
 	*/
+	err := env.mongodb.Ping(context.TODO(), readpref.Primary())
+	if err != nil {
+		c.AbortWithError(
+			http.StatusServiceUnavailable,
+			err,
+		)
+	}
 
 	c.JSON(
 		http.StatusOK,

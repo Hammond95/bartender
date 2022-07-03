@@ -13,6 +13,9 @@ import (
 
 	"github.com/Hammond95/bartender/bartender/version"
 	hclog "github.com/hashicorp/go-hclog"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -40,7 +43,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	g := SetupServer(log, *address, *staticAssetsPath, trustedProxies)
+	mongoClient, err := mongo.Connect(
+		context.TODO(),
+		options.Client().ApplyURI("mongodb://localhost:7777"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	env := HandlersEnv{mongodb: mongoClient, logger: log}
+
+	g := SetupServer(env, *address, *staticAssetsPath, trustedProxies)
 
 	srv := &http.Server{
 		Addr:    *address,
