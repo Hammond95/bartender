@@ -43,7 +43,7 @@ func SetupServer(
 }
 
 func SetupServerRoutes(env api.HandlersEnv, g *gin.Engine) {
-	api.SetV1RouteGroupDefinition(g)
+	api.SetV1RouteGroupDefinition(g, env)
 
 	g.GET("/hello", env.HelloHandler)
 	g.GET("/info", env.InfoHandler)

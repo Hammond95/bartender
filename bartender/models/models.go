@@ -9,28 +9,28 @@ type Ingredient struct {
 }
 
 type IngredientDose struct {
-	Name     Ingredient
-	Quantity string
+	Name     Ingredient `json:"name" xml:"Name" yaml:"name"`
+	Quantity string     `json:"quantity" xml:"Quantity" yaml:"quantity"`
 }
 
 type Cocktail struct {
-	Name        string
-	Image       string
-	Ingredients []Ingredient
-	IsAlcoholic bool
-	Tags        []string
+	Name        string         `json:"name" xml:"Name" yaml:"name"`
+	Image       sql.NullString `json:"image" xml:"Image" yaml:"image"`
+	Ingredients []Ingredient   `json:"ingredients" xml:"Ingredients" yaml:"ingredients"`
+	IsAlcoholic bool           `json:"isAlcoholic" xml:"IsAlcoholic" yaml:"isAlcoholic"`
+	Tags        []string       `json:"tags" xml:"Tags" yaml:"tags"`
 }
 
 type Glass struct {
-	Name           string
-	Image          string
-	CapacityLiters float32
+	Name           string         `json:"name" xml:"Name" yaml:"name"`
+	Image          sql.NullString `json:"image" xml:"Image" yaml:"image"`
+	CapacityLiters float32        `json:"capacityLiters" xml:"CapacityLiters" yaml:"capacityLiters"`
 }
 
 type Recipe struct {
-	Name          Cocktail
-	CanBeServedIn []Glass
-	Doses         []IngredientDose
-	Text          string
-	Difficulty    int8
+	Name          Cocktail         `json:"name" xml:"Name" yaml:"name"`
+	CanBeServedIn []Glass          `json:"canBeServedIn" xml:"CanBeServedIn" yaml:"canBeServedIn"`
+	Doses         []IngredientDose `json:"doses" xml:"Doses" yaml:"doses"`
+	Text          string           `json:"text" xml:"Text" yaml:"text"`
+	Difficulty    int8             `json:"difficulty" xml:"Difficulty" yaml:"difficulty"`
 }

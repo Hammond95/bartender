@@ -1,17 +1,15 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/Hammond95/bartender/bartender/dbo"
-	models "github.com/Hammond95/bartender/bartender/models"
 	"github.com/gin-gonic/gin"
 )
 
-func RecipeHandler(c *gin.Context) {
+/*func RecipeHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "recipe.html", nil)
-}
+}*/
 
 func (env *HandlersEnv) GetCocktailsHandler(c *gin.Context) {
 
@@ -26,18 +24,37 @@ func (env *HandlersEnv) GetCocktailsHandler(c *gin.Context) {
 	)
 }
 
-func V1DefineCocktailRoutes(group *gin.RouterGroup) {
+func (env *HandlersEnv) GetCocktailDetailsHandler(c *gin.Context) {
+	cocktailName := c.Params.ByName("name")
+
+	cocktail, err := dbo.GetCocktail(env.MongoDB, cocktailName)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(
+		http.StatusOK,
+		cocktail,
+	)
+}
+
+func (env *HandlersEnv) GetCocktailIngredientsHandler(c *gin.Context) {
+	cocktailName := c.Params.ByName("name")
+	ingredients, err := dbo.GetCocktailIngredients(env.MongoDB, cocktailName)
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(
+		http.StatusOK,
+		ingredients,
+	)
+}
+
+func V1DefineCocktailRoutes(group *gin.RouterGroup, env HandlersEnv) {
 	ckt := group.Group("/cocktail")
 
-	ckt.GET("/ingredients", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"ingredients": []models.Ingredient{
-				{Name: "gin", Type: "liquor", Image: sql.NullString{}},
-				{Name: "tonic water", Type: "beverage", Image: sql.NullString{}},
-				{Name: "lime", Type: "fruit", Image: sql.NullString{}},
-			},
-		})
-	})
+	ckt.GET("/:name", env.GetCocktailDetailsHandler)
+	ckt.GET("/:name/ingredients", env.GetCocktailIngredientsHandler)
 
-	ckt.GET("/recipe", RecipeHandler)
+	//ckt.GET("/recipe", RecipeHandler)
 }

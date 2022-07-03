@@ -15,7 +15,7 @@ type HandlersEnv struct {
 	Logger  hclog.Logger
 }
 
-func SetV1RouteGroupDefinition(router *gin.Engine) {
+func SetV1RouteGroupDefinition(router *gin.Engine, env HandlersEnv) {
 	apiV1 := router.Group("/v1")
-	V1DefineCocktailRoutes(apiV1)
+	V1DefineCocktailRoutes(apiV1, env)
 }
