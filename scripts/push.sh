@@ -6,8 +6,8 @@ if [[ -z "$version" ]]; then
     echo "Please provide a release version when calling the script!"
     exit 1
 fi
-image="gintonic"
-destimage="gintonic"
+image="bartender"
+destimage="bartender"
 
 echo "Login for DockerHub."
 read -p "Username: " DOCKER_USERNAME

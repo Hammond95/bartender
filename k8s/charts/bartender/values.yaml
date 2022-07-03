@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: mdelucadev/bartender
+  repository: docker.io/mdelucadev/bartender
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.0.1"
