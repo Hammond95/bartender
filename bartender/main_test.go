@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	api "github.com/Hammond95/bartender/bartender/api"
 	"github.com/gin-gonic/gin"
 	hclog "github.com/hashicorp/go-hclog"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +20,7 @@ func SetUpRouter() *gin.Engine {
 func TestHelloHandler(t *testing.T) {
 	log := hclog.Default()
 
-	env := HandlersEnv{logger: log}
+	env := api.HandlersEnv{Logger: log}
 
 	mockResponse := `{"message":"Hello World!"}`
 	r := SetUpRouter()

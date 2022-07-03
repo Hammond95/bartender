@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	api "github.com/Hammond95/bartender/bartender/api"
 	"github.com/Hammond95/bartender/bartender/version"
 	hclog "github.com/hashicorp/go-hclog"
 
@@ -51,7 +52,7 @@ func main() {
 		panic(err)
 	}
 
-	env := HandlersEnv{mongodb: mongoClient, logger: log}
+	env := api.HandlersEnv{MongoDB: mongoClient, Logger: log}
 
 	g := SetupServer(env, *address, *staticAssetsPath, trustedProxies)
 

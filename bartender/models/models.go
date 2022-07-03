@@ -1,9 +1,11 @@
 package models
 
+import "database/sql"
+
 type Ingredient struct {
-	Name  string
-	Type  string
-	Image string
+	Name  string         `json:"name" xml:"Name" yaml:"name"`
+	Type  string         `json:"type" xml:"Type" yaml:"type"`
+	Image sql.NullString `json:"image" xml:"Image" yaml:"image"`
 }
 
 type IngredientDose struct {

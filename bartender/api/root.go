@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"context"
@@ -7,16 +7,8 @@ import (
 
 	"github.com/Hammond95/bartender/bartender/version"
 	"github.com/gin-gonic/gin"
-	hclog "github.com/hashicorp/go-hclog"
-
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
-
-type HandlersEnv struct {
-	mongodb *mongo.Client
-	logger  hclog.Logger
-}
 
 func (env *HandlersEnv) HelloHandler(c *gin.Context) {
 	c.JSON(
@@ -72,7 +64,7 @@ func (env *HandlersEnv) ReadinessHandler(c *gin.Context) {
 		)
 	}
 	*/
-	err := env.mongodb.Ping(context.TODO(), readpref.Primary())
+	err := env.MongoDB.Ping(context.TODO(), readpref.Primary())
 	if err != nil {
 		c.AbortWithError(
 			http.StatusServiceUnavailable,
