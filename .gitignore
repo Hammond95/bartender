@@ -1,3 +1,6 @@
 # Ignore 
 bin/*
 .vscode/
+
+# Don't Ignore
+!bin/.gitkeep
