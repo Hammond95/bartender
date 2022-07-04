@@ -15,7 +15,10 @@ func (env *HandlersEnv) GetCocktailsHandler(c *gin.Context) {
 
 	cocktails, err := dbo.GetCocktails(env.MongoDB)
 	if err != nil {
-		panic(err)
+		c.AbortWithError(
+			http.StatusInternalServerError,
+			err,
+		)
 	}
 
 	c.JSON(
@@ -53,6 +56,7 @@ func (env *HandlersEnv) GetCocktailIngredientsHandler(c *gin.Context) {
 func V1DefineCocktailRoutes(group *gin.RouterGroup, env HandlersEnv) {
 	ckt := group.Group("/cocktail")
 
+	ckt.GET("/all", env.GetCocktailsHandler)
 	ckt.GET("/:name", env.GetCocktailDetailsHandler)
 	ckt.GET("/:name/ingredients", env.GetCocktailIngredientsHandler)
 

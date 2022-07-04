@@ -46,7 +46,17 @@ func main() {
 
 	mongoClient, err := mongo.Connect(
 		context.TODO(),
-		options.Client().ApplyURI("mongodb://localhost:7777"),
+		options.Client().ApplyURI(
+			fmt.Sprintf("mongodb://localhost:%v", os.Getenv("MONGODB_PORT")),
+		),
+		// TODO: Provide Built Config
+		// will implement in config.go
+		options.Client().SetAuth(
+			options.Credential{
+				Username: os.Getenv("MONGODB_USERNAME"),
+				Password: os.Getenv("MONGODB_PASSWORD"),
+			},
+		),
 	)
 	if err != nil {
 		panic(err)
@@ -70,6 +80,7 @@ func main() {
 		}
 	}()
 
+	// TODO: Better management of signals
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
 	quit := make(chan os.Signal)
