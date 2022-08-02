@@ -44,8 +44,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	mongoContext, mongoContextCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer mongoContextCancel()
+
 	mongoClient, err := mongo.Connect(
-		context.TODO(),
+		mongoContext,
 		options.Client().ApplyURI(
 			fmt.Sprintf("mongodb://localhost:%v", os.Getenv("MONGODB_PORT")),
 		),
@@ -59,6 +62,9 @@ func main() {
 		),
 	)
 	if err != nil {
+		panic(err)
+	}
+	if err := mongoClient.Ping(mongoContext, nil); err != nil {
 		panic(err)
 	}
 

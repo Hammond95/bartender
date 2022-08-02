@@ -1,6 +1,10 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Ingredient struct {
 	Name  string         `json:"name" xml:"Name" yaml:"name"`
@@ -14,11 +18,12 @@ type IngredientDose struct {
 }
 
 type Cocktail struct {
-	Name        string         `json:"name" xml:"Name" yaml:"name"`
-	Image       sql.NullString `json:"image" xml:"Image" yaml:"image"`
-	Ingredients []Ingredient   `json:"ingredients" xml:"Ingredients" yaml:"ingredients"`
-	IsAlcoholic bool           `json:"isAlcoholic" xml:"IsAlcoholic" yaml:"isAlcoholic"`
-	Tags        []string       `json:"tags" xml:"Tags" yaml:"tags"`
+	Id          primitive.ObjectID `bson:"_id" json:"_id" xml:"_Id" yaml:"_id"`
+	Name        string             `json:"name" xml:"Name" yaml:"name"`
+	Image       sql.NullString     `json:"image" xml:"Image" yaml:"image"`
+	Ingredients []Ingredient       `json:"ingredients" xml:"Ingredients" yaml:"ingredients"`
+	IsAlcoholic bool               `json:"isAlcoholic" xml:"IsAlcoholic" yaml:"isAlcoholic"`
+	Tags        []string           `json:"tags" xml:"Tags" yaml:"tags"`
 }
 
 type Glass struct {

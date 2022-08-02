@@ -12,8 +12,10 @@ import (
 }*/
 
 func (env *HandlersEnv) GetCocktailsHandler(c *gin.Context) {
+	c.DefaultQuery("lastId", "")
+	c.DefaultQuery("perPage", "30")
 
-	cocktails, err := dbo.GetCocktails(env.MongoDB)
+	cocktails, err := dbo.GetCocktails(env.MongoDB, c)
 	if err != nil {
 		c.AbortWithError(
 			http.StatusInternalServerError,
