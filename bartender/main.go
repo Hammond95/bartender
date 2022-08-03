@@ -11,8 +11,12 @@ import (
 	"syscall"
 	"time"
 
+	api "github.com/Hammond95/bartender/bartender/api"
 	"github.com/Hammond95/bartender/bartender/version"
 	hclog "github.com/hashicorp/go-hclog"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -40,7 +44,33 @@ func main() {
 		os.Exit(1)
 	}
 
-	g := SetupServer(log, *address, *staticAssetsPath, trustedProxies)
+	mongoContext, mongoContextCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer mongoContextCancel()
+
+	mongoClient, err := mongo.Connect(
+		mongoContext,
+		options.Client().ApplyURI(
+			fmt.Sprintf("mongodb://localhost:%v", os.Getenv("MONGODB_PORT")),
+		),
+		// TODO: Provide Built Config
+		// will implement in config.go
+		options.Client().SetAuth(
+			options.Credential{
+				Username: os.Getenv("MONGODB_USERNAME"),
+				Password: os.Getenv("MONGODB_PASSWORD"),
+			},
+		),
+	)
+	if err != nil {
+		panic(err)
+	}
+	if err := mongoClient.Ping(mongoContext, nil); err != nil {
+		panic(err)
+	}
+
+	env := api.HandlersEnv{MongoDB: mongoClient, Logger: log}
+
+	g := SetupServer(env, *address, *staticAssetsPath, trustedProxies)
 
 	srv := &http.Server{
 		Addr:    *address,
@@ -56,6 +86,7 @@ func main() {
 		}
 	}()
 
+	// TODO: Better management of signals
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
 	quit := make(chan os.Signal)
